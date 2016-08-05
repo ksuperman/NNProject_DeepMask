@@ -4,6 +4,7 @@ from keras.layers.convolutional import Convolution2D, MaxPooling2D, ZeroPadding2
 from keras.optimizers import SGD
 import cv2, numpy as np
 import urllib
+import os
 
 
 def VGG_16(weights_path=None):
@@ -144,11 +145,11 @@ if __name__ == "__main__":
     graph = VGG_16_graph()
 
     print 'creating sequential model...'
-    model = VGG_16('..\\Resources\\vgg16_weights.h5')
+    model = VGG_16(os.path.join('..','Resources','vgg16_weights.h5'))
 
     print 'setting graph weights...'
     graph.set_weights(model.get_weights())
-    graph.save_weights('vgg16_graph_weights.h5')
+    graph.save_weights(os.path.join('..','Resources','vgg16_graph_weights.h5'))
 
     print 'compiling graph model...'
     sgd = SGD(lr=0.1, decay=1e-6, momentum=0.9, nesterov=True)
