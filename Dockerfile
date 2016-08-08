@@ -5,6 +5,8 @@ RUN apt-get install -y libyaml-dev liblapack-dev libopenblas-dev libopencv-dev p
 RUN pip install cython
 RUN pip install h5py
 RUN pip install -U six
+RUN pip install matplotlib
+RUN pip install scikit-image
 
 # Install keras == 0.3.1 to prevent errors:
 # 'Graph' object has no attribute 'layers'
@@ -13,18 +15,29 @@ RUN pip install -I keras==0.3.1
 
 RUN git clone https://github.com/pdollar/coco.git && cd coco/PythonAPI && make install
 
+# MSCOCO
+RUN cd / && wget 'http://msvocds.blob.core.windows.net/annotations-1-0-3/instances_train-val2014.zip' && \
+  unzip instances_train-val2014.zip && \
+  rm instances_train-val2014.zip
+RUN cd /annotations && wget 'http://msvocds.blob.core.windows.net/coco2014/train2014.zip' && \
+  unzip train2014.zip && \
+  rm train2014.zip
+RUN cd /annotations && wget 'http://msvocds.blob.core.windows.net/coco2014/val2014.zip' && \
+  unzip val2014.zip && \
+  rm val2014.zip
+RUN cd /annotations && ln -s train2014 images_train
+RUN cd /annotations && ln -s val2014 images_val
+
 COPY . /deepmask
 
 WORKDIR /deepmask/
 
-RUN mkdir Resources Predictions Results \
+RUN mkdir Resources Predictions Results annotations \
   Predictions/nets Predictions/test Predictions/train \
-  Predictions/test_predictions Predictions/train_predictions
+  Predictions/test_predictions Predictions/train_predictions \
+  Results/pos-train Results/neg-train Results/pos-val Results/neg-val
 
-# MSCOCO
-RUN wget 'http://msvocds.blob.core.windows.net/annotations-1-0-3/instances_train-val2014.zip' && \
-  unzip instances_train-val2014.zip && \
-  rm instances_train-val2014.zip
+RUN cp -v /annotations/*.json annotations/
 
 # VGG-D
 RUN wget 'https://raw.githubusercontent.com/Nanolx/patchimage/master/tools/gdown.pl' && \
@@ -33,4 +46,9 @@ RUN wget 'https://raw.githubusercontent.com/Nanolx/patchimage/master/tools/gdown
 
 # `ln` needed to fix: libdc1394 error: Failed to initialize libdc1394
 RUN ln /dev/null /dev/raw1394 && cd HelperScripts && python CreateVggGraphWeights.py
+RUN ln /dev/null /dev/raw1394 && python ExamplesGenerator.py
+
+RUN find Results/pos-train/ Results/neg-train/ -type f -exec mv -t Predictions/train/ {} +
+RUN find Results/pos-val/ Results/neg-val/ -type f -exec mv -t Predictions/test/ {} +
+
 RUN ln /dev/null /dev/raw1394 && python EndToEnd.py
