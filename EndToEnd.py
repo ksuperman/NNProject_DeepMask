@@ -187,7 +187,7 @@ def main():
     for round_number in range(first_round, rounds + 1):
         print_debug('starting round %d:' % round_number)
         graph.fit({'input': train_images, 'seg_output': train_expected_masks, 'score_output': train_expected_scores},
-                  nb_epoch=epochs_per_round, batch_size=batch_size, verbose=0, shuffle=True)
+                  nb_epoch=epochs_per_round, batch_size=batch_size, verbose=1, shuffle=True)
         print_debug('Evaluating...')
         train_loss, test_loss = evaluate_net_loss(graph, train_images, train_expected_scores, train_expected_masks,
                                                   test_images, test_expected_scores, test_expected_masks, loss_file)
