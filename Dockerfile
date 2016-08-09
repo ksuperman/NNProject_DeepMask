@@ -45,10 +45,15 @@ RUN wget 'https://raw.githubusercontent.com/Nanolx/patchimage/master/tools/gdown
   ./gdown.pl 'https://docs.google.com/uc?id=0Bz7KyqmuGsilT0J5dmRCM0ROVHc&export=download' Resources/vgg16_weights.h5
 
 # `ln` needed to fix: libdc1394 error: Failed to initialize libdc1394
-RUN ln /dev/null /dev/raw1394 && cd HelperScripts && python CreateVggGraphWeights.py
-RUN ln /dev/null /dev/raw1394 && python ExamplesGenerator.py
+RUN ln /dev/null /dev/raw1394 && cd HelperScripts && python -u CreateVggGraphWeights.py
+RUN ln /dev/null /dev/raw1394 && python -u ExamplesGenerator.py
 
-RUN find Results/pos-train/ Results/neg-train/ -type f -exec mv -t Predictions/train/ {} +
-RUN find Results/pos-val/ Results/neg-val/ -type f -exec mv -t Predictions/test/ {} +
-
-RUN ln /dev/null /dev/raw1394 && python EndToEnd.py
+RUN cd HelperScripts && python -u ChooseTestData.py
+RUN find Predictions/train -type f | wc -l
+RUN find Predictions/test -type f | wc -l
+# RUN find Results/pos-train/ Results/neg-train/ -type f -exec mv -t Predictions/train/ {} +
+# RUN find Results/pos-val/ Results/neg-val/ -type f -exec mv -t Predictions/test/ {} +
+RUN cat ~/.keras/keras.json
+RUN ln /dev/null /dev/raw1394 && OMP_NUM_THREADS=1 python -u check_blas.py -q
+RUN ln /dev/null /dev/raw1394 && OMP_NUM_THREADS=6 python -u check_blas.py -q
+RUN ln /dev/null /dev/raw1394 && python -u EndToEnd.py
