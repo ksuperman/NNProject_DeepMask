@@ -26,6 +26,7 @@ class ExamplesGenerator(object):
             pic_path = self.images_dir + pic_data['file_name']
 
             if not os.path.isfile(pic_path):
+                # print pic_path
                 stats.img_not_found += 1
                 if self.debug:
                     print 'image %d does not exist' % pic_id
@@ -328,7 +329,9 @@ class Patch(object):
         return [self.width, self.height]
 
 
-# eg = ExamplesGenerator('..', 'val2014', 'images_val', 'Results/pos-val', 'Results/neg-val')
+eg = ExamplesGenerator('..', 'val2014', 'images_val', 'Results/pos-val', 'Results/neg-val')
+stats_res = eg.generate_examples()
+print stats_res
 eg = ExamplesGenerator('..', 'train2014', 'images_train', 'Results/pos-train', 'Results/neg-train')
 stats_res = eg.generate_examples()
 print stats_res
