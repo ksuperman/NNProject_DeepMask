@@ -2,17 +2,19 @@ import numpy as np
 import glob
 import shutil
 
-dirs = [['../Results/neg-train','../Predictions/train'],['../Results/pos-train','../Predictions/train'],['../Results/neg-val','../Predictions/test'],['../Results/pos-val','../Predictions/test']]
+data_dirs = [['../Results/neg-train','../Predictions/train',8000],['../Results/pos-train','../Predictions/train',8000],['../Results/neg-val','../Predictions/test',500],['../Results/pos-val','../Predictions/test',500]]
 
-for pair in dirs:
-    source_dir = pair[0]
-    dest_dir = pair[1]
+for data_dir in data_dirs:
+    source_dir = data_dir[0]
+    dest_dir = data_dir[1]
+    num_samples = data_dir[2]
+
     print source_dir
     print dest_dir
 
     ex_paths = glob.glob('%s/*-im.png' % source_dir)
     np.random.shuffle(ex_paths)
-    selected = ex_paths[0:8000]
+    selected = ex_paths[0:num_samples]
 
     for sel in selected:
         shutil.copy(sel, dest_dir)
