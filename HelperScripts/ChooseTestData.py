@@ -2,7 +2,10 @@ import numpy as np
 import glob
 import shutil
 
-data_dirs = [['../Results/neg-train','../Predictions/train',8000],['../Results/pos-train','../Predictions/train',8000],['../Results/neg-val','../Predictions/test',500],['../Results/pos-val','../Predictions/test',500]]
+train_samples = 1000
+test_samples = train_samples/16
+
+data_dirs = [['../Results/neg-train','../Predictions/train',train_samples],['../Results/pos-train','../Predictions/train',train_samples],['../Results/neg-val','../Predictions/test',test_samples],['../Results/pos-val','../Predictions/test',test_samples]]
 
 for data_dir in data_dirs:
     source_dir = data_dir[0]
