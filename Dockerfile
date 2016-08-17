@@ -54,6 +54,5 @@ RUN find Predictions/test -type f | wc -l
 # RUN find Results/pos-train/ Results/neg-train/ -type f -exec mv -t Predictions/train/ {} +
 # RUN find Results/pos-val/ Results/neg-val/ -type f -exec mv -t Predictions/test/ {} +
 RUN cat ~/.keras/keras.json
-RUN ln /dev/null /dev/raw1394 && OMP_NUM_THREADS=1 python -u check_blas.py -q
-RUN ln /dev/null /dev/raw1394 && OMP_NUM_THREADS=6 python -u check_blas.py -q
+RUN echo "[global]\nopenmp=True" > /root/.theanorc
 RUN ln /dev/null /dev/raw1394 && python -u EndToEnd.py
